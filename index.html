@@ -95,6 +95,17 @@ header.nav{position:sticky;top:env(safe-area-inset-top, 0px);z-index:9;backgroun
   .cue:last-child span{left:auto;right:3px}
 @media (max-width:560px){.cue span{font-size:.55rem;padding:1px 3px}}
 
+/* demo video */
+.demo{padding-block:24px 8px}
+.demoFrame{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.demoFrame video{display:block;width:100%;height:auto;aspect-ratio:16/9;background:#0d0e12}
+.demoFrame.tall video{aspect-ratio:9/16;max-height:78vh;margin-inline:auto;width:auto;max-width:100%}
+.chapters{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chapters button{font-family:var(--mono);font-size:.78rem;letter-spacing:.04em;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel-2);color:var(--muted);cursor:pointer;display:inline-flex;gap:8px;align-items:center}
+.chapters button b{color:var(--amber);font-weight:700}
+.chapters button[aria-current="true"]{border-color:var(--amber);color:var(--fg);background:var(--amber-dim)}
+.demoNote{margin-top:10px;color:var(--muted);font-size:var(--s1)}
+
 /* sections */
 section{padding-block:72px}
 .secHead{max-width:640px;display:grid;gap:12px;margin-bottom:36px}
@@ -118,13 +129,25 @@ section{padding-block:72px}
 .price{font-family:var(--display);font-size:3rem;font-weight:800;line-height:1}
 .price small{font-family:var(--body);font-size:1rem;font-weight:500;color:var(--muted);margin-left:6px}
 .ticks{list-style:none;padding:0;margin:0;display:grid;gap:10px}
-.ticks li{display:flex;gap:10px;align-items:baseline}
-.ticks li::before{content:"";flex:0 0 8px;height:8px;border-radius:50%;background:var(--teal);transform:translateY(-1px)}
+.ticks li{position:relative;padding-left:18px}
+.ticks li::before{content:"";position:absolute;left:0;top:.6em;width:8px;height:8px;border-radius:50%;background:var(--teal)}
 .reqs{display:grid;gap:14px}
 .reqs dl{margin:0;display:grid;grid-template-columns:max-content minmax(0,1fr);gap:10px 18px}
 .reqs dt{font-family:var(--mono);font-size:var(--s1);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;padding-top:2px}
 .reqs dd{margin:0}
 .fine{color:var(--muted);font-size:var(--s1)}
+.dlList{display:grid;gap:8px}
+.dlList .btn{justify-content:space-between;width:100%}
+.dlList .btn small{font-family:var(--mono);font-size:.74rem;color:var(--muted);font-weight:500}
+.dlList .btn.primary small{color:#5a3f12}
+.soon{justify-self:start;font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--amber);border:1px solid var(--amber-dim);border-radius:6px;padding:3px 8px}
+.waitForm{display:grid;gap:10px}
+.waitRow{display:flex;gap:8px;flex-wrap:wrap}
+.waitRow input[type=email]{flex:1 1 200px;min-width:0;font:inherit;font-size:.98rem;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:12px 14px}
+.waitRow input[type=email]:focus{outline:2px solid var(--amber);outline-offset:1px;border-color:transparent}
+.waitMsg{font-size:var(--s1);min-height:1.2em}
+.waitMsg.ok{color:var(--teal)} .waitMsg.err{color:var(--red)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 @media (max-width:820px){.priceGrid{grid-template-columns:1fr}}
 
 .faq{display:grid;gap:0;border-top:1px solid var(--line);max-width:820px}
@@ -159,12 +182,13 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
   <div class="wrap navIn">
     <a class="brand" href="#" data-home><i></i>BLENDKEY</a>
     <nav class="navLinks" aria-label="Sections">
+      <a href="#demo" data-home>Demo</a>
       <a href="#features" data-home>Features</a>
       <a href="#workflow" data-home>How it works</a>
       <a href="#pricing" data-home>Pricing</a>
       <a href="#faq" data-home>FAQ</a>
     </nav>
-    <a class="btn primary sm" data-download href="#pricing">Download free</a>
+    <a class="btn primary sm" data-download href="#get">Download free</a>
   </div>
 </header>
 
@@ -176,8 +200,8 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
         <h1>Harmonic sets, prepped in <em>minutes</em>.</h1>
         <p class="lede">BlendKey reads the BPM and key of every track, drops five cue points on the beat grid, orders your playlist so each blend sits in key, and sends it all to Rekordbox, ready for your USB.</p>
         <div class="heroCtas">
-          <a class="btn primary" data-download href="#pricing">Download free</a>
-          <a class="btn" data-buy href="#pricing">Buy Pro · <span data-price></span></a>
+          <a class="btn primary" data-download href="#get">Download free</a>
+          <a class="btn" data-buy href="#pricing"><span data-buy-label>Buy Pro</span> · <span data-price></span></a>
         </div>
         <p class="heroNote">Free to try · Windows and Mac · Works offline</p>
       </div>
@@ -202,6 +226,27 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
     </div>
   </div>
 
+  <section id="demo" class="demo">
+    <div class="wrap">
+      <div class="secHead">
+        <div class="eyebrow">See it in action</div>
+        <h2>From a messy crate to a set that climbs.</h2>
+        <p>Thirty seconds in the real app: sort Intro to Peak, check keys on the wheel, auto cue points, rename for the gig, export to Rekordbox.</p>
+      </div>
+      <div class="demoFrame" id="demoFrame">
+        <video id="demoVideo" muted loop playsinline preload="metadata" aria-label="BlendKey demo: sorting a playlist Intro to Peak, the key wheel, auto cue points, renaming files and exporting to Rekordbox"></video>
+      </div>
+      <div class="chapters" id="chapters" role="group" aria-label="Jump to a part of the demo">
+        <button type="button" data-t="2.7"><b>1</b>Sort Intro → Peak</button>
+        <button type="button" data-t="7.7"><b>2</b>Key wheel</button>
+        <button type="button" data-t="13.0"><b>3</b>Auto cue points</button>
+        <button type="button" data-t="17.6"><b>4</b>Rename</button>
+        <button type="button" data-t="23.0"><b>5</b>Export</button>
+      </div>
+      <p class="demoNote">Tracks in the demo are example names, ordered so every step is a compatible key move.</p>
+    </div>
+  </section>
+
   <section id="features">
     <div class="wrap">
       <div class="secHead">
@@ -213,7 +258,7 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
         <div class="feat"><span class="tag">BPM + KEY</span><h3>Reads every track</h3><p>Key and tempo detection from a published music-analysis library, rounded the way DJ software shows it (130.00, not 129.9). Fix any read in two clicks.</p></div>
         <div class="feat"><span class="tag">KEY WHEEL</span><h3>Shows what blends</h3><p>Select a track and every compatible key lights up. Switch between number codes like 8A and real key names like Am.</p></div>
         <div class="feat"><span class="tag">5 CUES</span><h3>Cue points on the grid</h3><p>Intro on the first beat, first drop, breakdown, second drop, and an outro 32 bars from the end. Drag any of them and they snap to the beat.</p></div>
-        <div class="feat"><span class="tag">AUTO</span><h3>Orders your set</h3><p>Build a playlist from low to high energy, high to low, or shuffled, with neighbouring tracks kept in compatible keys.</p></div>
+        <div class="feat"><span class="tag">AUTO</span><h3>Orders your set, every mix in key</h3><p>One click builds the whole set so each blend is a compatible key move, following the energy shape you pick. Every transition is marked ✓, ~ or ⚠, so you can see at a glance that it works.</p></div>
         <div class="feat"><span class="tag">RENAME</span><h3>One file per mix</h3><p>Add a label like "Club Mix" to every file in a playlist, on disk, so each set keeps its own cues. One click puts the old names back.</p></div>
         <div class="feat"><span class="tag">EXPORT</span><h3>Straight to Rekordbox</h3><p>An XML with keys, BPM, beat grid, color-coded hot cues and your playlists in the exact order you arranged them.</p></div>
       </div>
@@ -227,7 +272,7 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
         <h2>Folder in, Rekordbox playlist out.</h2>
       </div>
       <div class="steps">
-        <div class="step"><span class="n">1</span><h3>Import</h3><p>Pick a folder or drag it onto BlendKey. Your library stays loaded the next time you open the app.</p></div>
+        <div class="step"><span class="n">1</span><h3>Import</h3><p>Pick a folder or drag it onto BlendKey. Tracks are analyzed once; next time you open the app your whole library is there instantly.</p></div>
         <div class="step"><span class="n">2</span><h3>Check</h3><p>Glance down the key and BPM columns and the cue points on each waveform. Correct anything that's off; BlendKey keeps your fixes.</p></div>
         <div class="step"><span class="n">3</span><h3>Arrange</h3><p>Drop tracks into a playlist and let Auto order them, or order them yourself using the key wheel.</p></div>
         <div class="step"><span class="n">4</span><h3>Export</h3><p>Save the Rekordbox XML. BlendKey already knows where every file lives, so there's no folder path to type.</p></div>
@@ -249,12 +294,16 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
           <div class="price">$0</div>
           <ul class="ticks">
             <li>BPM and key detection</li>
-            <li>Key Wheel and Auto playlist ordering</li>
+            <li>Key Wheel, plus Intro → Peak, Peak → Intro and Random set ordering, every mix in key</li>
             <li>Five beat-grid cue points per track</li>
             <li>Unlimited tracks and playlists</li>
           </ul>
-          <a class="btn" data-download href="#pricing">Download free</a>
-          <p class="fine">Windows and Mac. Upgrade inside the app any time with a license key; there's nothing to reinstall.</p>
+          <div class="dlList" id="get">
+            <a class="btn" data-os="win" href="#">Download for Windows <small>.exe</small></a>
+            <a class="btn" data-os="macArm" href="#">Download for Mac · Apple Silicon <small>.dmg</small></a>
+            <a class="btn" data-os="macIntel" href="#">Download for Mac · Intel <small>.dmg</small></a>
+          </div>
+          <p class="fine">Version <span data-version></span>. Not sure which Mac? Apple menu → About This Mac: "Apple M1/M2/M3/M4" means Apple Silicon. Upgrade inside the app any time with a license key; there's nothing to reinstall.</p>
         </div>
         <div class="priceCard">
           <div class="eyebrow">BlendKey Pro</div>
@@ -263,17 +312,30 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
             <li>Everything in Free</li>
             <li><b>Export to Rekordbox</b> with keys, BPM, beat grid, hot cues and playlist order</li>
             <li><b>Rename files</b> per mix, with one-click revert</li>
+            <li><b>4 Pro set builders</b>: Warm-up → Peak → Cool-down, Energy Waves, Key Climb and Smoothest Mix</li>
             <li>Use it on 2 computers</li>
           </ul>
-          <a class="btn primary" data-buy href="#pricing">Buy BlendKey Pro</a>
-          <p class="fine">Your license key arrives by email straight after checkout. Checkout and payment are handled by Lemon Squeezy, our reseller and merchant of record. Taxes are calculated at checkout.</p>
+          <div data-buy-live>
+            <a class="btn primary" data-buy href="#pricing" style="width:100%">Buy BlendKey Pro</a>
+          </div>
+          <form class="waitForm" id="pro-waitlist" data-buy-soon novalidate>
+            <span class="soon">Checkout opening soon</span>
+            <label for="waitEmail">Pro goes on sale very soon. Leave your email and we'll tell you the moment it does.</label>
+            <div class="waitRow">
+              <input type="email" id="waitEmail" name="email" required placeholder="you@email.com" autocomplete="email">
+              <button class="btn primary" type="submit">Notify me</button>
+            </div>
+            <div class="hp" aria-hidden="true"><input type="text" name="_honey" tabindex="-1" autocomplete="off"></div>
+            <div class="waitMsg" id="waitMsg" role="status" aria-live="polite"></div>
+          </form>
+          <p class="fine">Your license key arrives by email straight after checkout. Checkout and payment are handled by Lemon Squeezy, our reseller and merchant of record. Taxes are calculated at checkout. Meanwhile, the free version is fully usable today.</p>
         </div>
       </div>
       <div class="reqs" style="margin-top:48px">
         <h2>Requirements</h2>
         <dl>
           <dt>Windows</dt><dd>Windows 10 or 11, 64-bit</dd>
-          <dt>Mac</dt><dd>Apple Silicon (M1 and newer) or Intel</dd>
+          <dt>Mac</dt><dd>macOS 10.15 or later, Apple Silicon (M1 and newer) or Intel</dd>
           <dt>Rekordbox</dt><dd>Any version with rekordbox xml import</dd>
           <dt>Files</dt><dd>MP3, WAV, AIFF, FLAC, M4A, OGG</dd>
           <dt>Internet</dt><dd>Needed to activate a Pro key; then offline for up to 30 days at a time</dd>
@@ -291,7 +353,9 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
         <details><summary>Does it change my music files?</summary><p>Only if you use Rename, which adds a label to the file names in a playlist. The audio itself is never touched, and Revert restores the original names.</p></details>
         <details><summary>How do I move BlendKey to a new computer?</summary><p>Open BlendKey on the old computer, click BlendKey Pro, then Deactivate this computer. Then activate the same key on the new one. Each key works on 2 computers at once.</p></details>
         <details><summary>Do I need internet to DJ?</summary><p>No. You need a connection to activate your key. After that BlendKey checks in now and then, and keeps working offline for up to 30 days between checks.</p></details>
-        <details><summary>My Mac says it can't verify the developer.</summary><p>Right-click BlendKey in Applications, choose Open, then click Open. You only need to do this the first time.</p></details>
+        <details><summary>My Mac says Apple can't verify BlendKey.</summary><p>Drag BlendKey into Applications and open it once. When macOS blocks it, open System Settings → Privacy &amp; Security, scroll down and click <b>Open Anyway</b>, then confirm. On older macOS versions you can instead right-click BlendKey, choose Open, then click Open. You only need to do this the first time.</p></details>
+        <details><summary>Windows says "Windows protected your PC".</summary><p>That's Windows SmartScreen, which shows for new apps it hasn't seen many downloads of yet. Click <b>More info</b>, then <b>Run anyway</b>. You only need to do this when installing.</p></details>
+        <details><summary>Which Mac download do I need?</summary><p>Click the Apple menu → About This Mac. If it says Apple M1, M2, M3 or M4, choose Apple Silicon. If it says Intel, choose Intel.</p></details>
         <details><summary>Can I get a refund?</summary><p>All sales are final, so try the free version on your own music before you buy. If BlendKey Pro won't install or activate on a supported computer, email us and we'll fix it. See the <a href="#refunds">refund policy</a>.</p></details>
       </div>
       <div class="secHead" style="margin-top:56px;margin-bottom:0">
@@ -310,6 +374,8 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
   <a class="back" href="#">← Back to BlendKey</a>
   <h1>Terms of Use</h1>
   <p class="fine">Last updated <span data-updated></span></p>
+  <h2>The free version</h2>
+  <p>BlendKey Free is free to download and use, with no license key required. Pro features (Export to Rekordbox, Rename and the Pro set builders) need a BlendKey Pro license.</p>
   <h2>The license</h2>
   <p>When you buy BlendKey Pro you get a personal, non-transferable license to install and use BlendKey on up to 2 computers you own or control. You may not resell, share or publish your license key, or remove or get around the license check.</p>
   <h2>Purchases</h2>
@@ -334,8 +400,12 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
   <p>To activate and periodically check your license, BlendKey sends your license key and a label for your computer (for example "BlendKey on Windows") to Lemon Squeezy. Nothing else from your library is sent.</p>
   <h2>Purchases</h2>
   <p>When you buy, Lemon Squeezy collects your name, email, billing details and payment information to process the order and send your key. Lemon Squeezy's own privacy policy covers that data. We receive your name, email and order details so we can help you with support.</p>
+  <h2>Email list</h2>
+  <p>If you join the BlendKey Pro list, we receive your email address and use it only to tell you about BlendKey: when Pro goes on sale, launch offers and major updates. Signups are delivered to our inbox through FormSubmit, a form-processing service. We don't sell or share your email. Every email we send includes a way to unsubscribe, or just email us and we'll remove you.</p>
+  <h2>Downloads</h2>
+  <p>The free version downloads directly from this website. No account or email is needed to download it.</p>
   <h2>This website</h2>
-  <p>This site doesn't use tracking cookies or analytics.</p>
+  <p>This site doesn't use tracking cookies or analytics. It's hosted on GitHub Pages, which may log basic technical information such as IP addresses for security.</p>
   <h2>Your choices</h2>
   <p>Email us to ask what we hold about you or to have it deleted: <span data-email>support@yourdomain.com</span></p>
 </main>
@@ -365,10 +435,17 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
 /* ===== Fill these in before going live ===== */
 const SITE = {
   price: '$100',
-  buyUrl: '',                    // Lemon Squeezy checkout link for BlendKey Pro
-  downloadUrl: '',               // Lemon Squeezy $0 product link (or wherever the free installers live)
+  buyUrl: '',                    // Lemon Squeezy checkout link for BlendKey Pro. While empty, the Pro card shows the email waitlist.
+  downloadUrl: '',               // optional: send "Download free" buttons to a Lemon Squeezy $0 product instead of the direct downloads
+  version: '1.2.0',
+  downloads: {                   // direct downloads hosted in this repo's /download folder
+    win:      'download/BlendKey_1.2.0_x64-setup.exe',
+    macArm:   'download/BlendKey_1.2.0_aarch64.dmg',
+    macIntel: 'download/BlendKey_1.2.0_x64.dmg'
+  },
+  waitlistTo: 'blendkeyapp@gmail.com',   // FormSubmit delivers each Pro-list signup to this inbox
   email: 'blendkeyapp@gmail.com',
-  updated: 'November 5, 2026'
+  updated: 'November 9, 2026'
 };
 
 /* config -> page */
@@ -376,8 +453,68 @@ document.querySelectorAll('[data-price]').forEach(el=>{ el.textContent = SITE.pr
 document.querySelectorAll('[data-email]').forEach(el=>{ el.textContent = SITE.email; });
 document.querySelectorAll('[data-updated]').forEach(el=>{ el.textContent = SITE.updated; });
 document.querySelectorAll('[data-year]').forEach(el=>{ el.textContent = new Date().getFullYear(); });
-if(SITE.downloadUrl) document.querySelectorAll('[data-download]').forEach(a=>{ a.href = SITE.downloadUrl; a.target = '_blank'; a.rel = 'noopener'; });
-if(SITE.buyUrl) document.querySelectorAll('[data-buy]').forEach(a=>{ a.href = SITE.buyUrl; a.target = '_blank'; a.rel = 'noopener'; });
+document.querySelectorAll('[data-version]').forEach(el=>{ el.textContent = SITE.version; });
+if(SITE.buyUrl){
+  document.querySelectorAll('[data-buy]').forEach(a=>{ a.href = SITE.buyUrl; a.target = '_blank'; a.rel = 'noopener'; });
+  document.querySelectorAll('[data-buy-soon]').forEach(el=>el.hidden = true);
+} else {
+  // Pro not on sale yet: hero button jumps to the waitlist, Pro card shows the signup form
+  document.querySelectorAll('[data-buy-live]').forEach(el=>el.hidden = true);
+  document.querySelectorAll('[data-buy]').forEach(a=>{ a.href = '#pro-waitlist'; });
+  document.querySelectorAll('[data-buy-label]').forEach(el=>{ el.textContent = 'Get Pro'; });
+}
+
+/* direct downloads: wire each OS button, highlight the one that matches this computer */
+(function(){
+  const ua = navigator.userAgent || '', plat = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
+  const isMac = /Mac/i.test(plat) || /Macintosh/.test(ua), isWin = /Win/i.test(plat);
+  let mine = isWin ? 'win' : isMac ? 'macArm' : null;
+  // browsers hide the Mac chip type; the WebGL renderer name says "Intel" on Intel Macs
+  if(isMac){
+    try{
+      const gl = document.createElement('canvas').getContext('webgl');
+      const ext = gl && gl.getExtension('WEBGL_debug_renderer_info');
+      const r = ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : '';
+      mine = /Intel/i.test(r) ? 'macIntel' : /Apple/i.test(r) ? 'macArm' : null;   // unsure -> let them pick
+    }catch(e){ mine = null; }
+  }
+  document.querySelectorAll('[data-os]').forEach(a=>{
+    a.href = SITE.downloads[a.dataset.os]; a.setAttribute('download','');
+    if(a.dataset.os===mine) a.classList.add('primary');
+  });
+  // header / hero "Download free": straight to this computer's installer when we can tell, else to the list
+  document.querySelectorAll('[data-download]').forEach(a=>{
+    if(SITE.downloadUrl){ a.href = SITE.downloadUrl; a.target = '_blank'; a.rel = 'noopener'; }
+    else if(mine){ a.href = SITE.downloads[mine]; a.setAttribute('download',''); }
+    else a.href = '#get';
+  });
+})();
+
+/* Pro waitlist -> FormSubmit -> inbox */
+(function(){
+  const form = document.getElementById('pro-waitlist'); if(!form) return;
+  const msg = document.getElementById('waitMsg'), input = document.getElementById('waitEmail');
+  form.addEventListener('submit', async e=>{
+    e.preventDefault();
+    const email = input.value.trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ msg.className='waitMsg err'; msg.textContent='Please enter a valid email address.'; input.focus(); return; }
+    if(form.elements._honey.value) return;
+    const btn = form.querySelector('button'); btn.disabled = true; btn.textContent = 'Sending…';
+    try{
+      const r = await fetch('https://formsubmit.co/ajax/' + encodeURIComponent(SITE.waitlistTo), {
+        method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'},
+        body: JSON.stringify({ email, list:'BlendKey Pro waitlist', _subject:'New BlendKey Pro waitlist signup', _template:'table' })
+      });
+      if(!r.ok) throw new Error(r.status);
+      msg.className='waitMsg ok'; msg.textContent = "You're on the list. We'll email you the moment Pro goes on sale.";
+      input.value = ''; btn.textContent = 'Added';
+    }catch(err){
+      msg.className='waitMsg err'; msg.textContent = "That didn't go through. Please email " + SITE.email + " and we'll add you.";
+      btn.disabled = false; btn.textContent = 'Notify me';
+    }
+  });
+})();
+
 
 document.getElementById('copyEmail').addEventListener('click', e=>{
   const btn = e.currentTarget;
@@ -485,6 +622,29 @@ function drawWave(){
   layer.innerHTML = CUES.map(c=>{ const col=css.getPropertyValue(c.c).trim(); return `<div class="cue" style="left:${(c.bar/BARS*100).toFixed(2)}%;background:${col}"><span style="background:${col}">${c.name}</span></div>`; }).join('');
 }
 drawWave(); addEventListener('resize', drawWave);
+
+/* ===== demo video (landscape on every screen) ===== */
+(function(){
+  const v=document.getElementById('demoVideo'), frame=document.getElementById('demoFrame');
+  const narrow=matchMedia('(max-width:640px)'), still=matchMedia('(prefers-reduced-motion: reduce)');
+  function pick(){
+    const tall=false, t=v.currentTime||0;
+    const src=tall?'blendkey-demo-reel.mp4':'blendkey-demo-v2.mp4';
+    if(v.getAttribute('src')===src) return;
+    frame.classList.toggle('tall',tall);
+    v.poster=tall?'demo-poster-reel.jpg':'blendkey-demo-v2-poster.jpg';
+    v.src=src; v.currentTime=t;
+    if(still.matches){ v.controls=true; } else { v.autoplay=true; v.play().catch(()=>{ v.controls=true; }); }
+  }
+  pick(); narrow.addEventListener('change',pick);
+  const btns=[...document.querySelectorAll('#chapters button')];
+  btns.forEach(b=>b.addEventListener('click',()=>{ v.currentTime=parseFloat(b.dataset.t); v.play().catch(()=>{}); }));
+  v.addEventListener('timeupdate',()=>{
+    let cur=null; btns.forEach(b=>{ if(v.currentTime>=parseFloat(b.dataset.t)-0.05) cur=b; });
+    if(v.currentTime>24.3) cur=null;
+    btns.forEach(b=>b.setAttribute('aria-current', b===cur ? 'true':'false'));
+  });
+})();
 </script>
 
 </body>
