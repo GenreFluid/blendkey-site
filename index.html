@@ -127,6 +127,8 @@ section{padding-block:72px}
 .priceCard.free{border-color:var(--line)}
 .priceCard{background:var(--panel);border:1px solid var(--amber-dim);border-radius:16px;padding:30px;display:grid;gap:18px}
 .price{font-family:var(--display);font-size:3rem;font-weight:800;line-height:1}
+.price .was{font-size:1.6rem;font-weight:700;color:var(--muted);margin-right:12px;text-decoration-thickness:3px}
+.saleNote{margin:-6px 0 0;color:var(--amber);font-weight:600}
 .price small{font-family:var(--body);font-size:1rem;font-weight:500;color:var(--muted);margin-left:6px}
 .ticks{list-style:none;padding:0;margin:0;display:grid;gap:10px}
 .ticks li{position:relative;padding-left:18px}
@@ -308,6 +310,7 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
         <div class="priceCard">
           <div class="eyebrow">BlendKey Pro</div>
           <div class="price"><span data-price>—</span><small>one-time</small></div>
+          <p class="saleNote" data-sale-note hidden></p>
           <ul class="ticks">
             <li>Everything in Free</li>
             <li><b>Export to Rekordbox</b> with keys, BPM, beat grid, hot cues and playlist order</li>
@@ -434,7 +437,8 @@ footer{border-top:1px solid var(--line);padding-block:30px;color:var(--muted);fo
 <script>
 /* ===== Fill these in before going live ===== */
 const SITE = {
-  price: '$100',
+  price: '$79.99',              // regular price (must match Polar)
+  sale: { price: '$49.99', label: 'Launch price', until: 'Dec 31', ends: '2027-01-01T08:00:00Z' },   // shown until 'ends' (midnight Jan 1, Pacific); Polar's discount ends at the same moment
   buyUrl: 'https://buy.polar.sh/polar_cl_taBeZ1knqgofJkix28nod7ZWpqvFwZ1Jfm7Yt22xAF5',                    // Polar checkout link for BlendKey Pro. While empty, the Pro card shows the email waitlist.
   downloadUrl: '',               // optional: send "Download free" buttons to a Polar free product instead of the direct downloads
   version: '1.3.0',
@@ -449,7 +453,14 @@ const SITE = {
 };
 
 /* config -> page */
-document.querySelectorAll('[data-price]').forEach(el=>{ el.textContent = SITE.price || 'Price soon'; });
+const SALE_ON = SITE.sale && Date.now() < Date.parse(SITE.sale.ends);
+document.querySelectorAll('[data-price]').forEach(el=>{
+  if(SALE_ON && el.closest('.price')) el.innerHTML = '<s class="was">'+SITE.price+'</s>'+SITE.sale.price;
+  else el.textContent = SALE_ON ? SITE.sale.price : (SITE.price || 'Price soon');
+});
+document.querySelectorAll('[data-sale-note]').forEach(el=>{
+  if(SALE_ON){ el.textContent = SITE.sale.label+' until '+SITE.sale.until+'. Goes to '+SITE.price+' on January 1.'; el.hidden = false; }
+});
 document.querySelectorAll('[data-email]').forEach(el=>{ el.textContent = SITE.email; });
 document.querySelectorAll('[data-updated]').forEach(el=>{ el.textContent = SITE.updated; });
 document.querySelectorAll('[data-year]').forEach(el=>{ el.textContent = new Date().getFullYear(); });
