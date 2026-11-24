@@ -449,7 +449,12 @@ const SITE = {
   },
   waitlistTo: 'e014f80b8cfe8400b1f213bb64e5a363',   // FormSubmit alias for blendkeyapp@gmail.com (keeps the inbox address out of the form)
   email: 'support@blendkey.app',
-  updated: 'November 22, 2026'
+  updated: 'November 22, 2026',
+  tracking: {                    // ad tracking: leave an ID empty and that tool isn't loaded at all
+    metaPixel: '',               // Meta Pixel ID (15-16 digits) - Events Manager -> Data sources
+    ga4: '',                     // Google Analytics 4 measurement ID, 'G-XXXXXXX'
+    adsDownload: ''              // Google Ads conversion for free downloads, 'AW-123456789/AbCdEf'
+  }
 };
 
 /* config -> page */
@@ -658,5 +663,62 @@ drawWave(); addEventListener('resize', drawWave);
 })();
 </script>
 
+
+<script>
+/* ===== ad + analytics tracking (Meta Pixel, GA4, Google Ads) ===== */
+(function(){
+  const T = SITE.tracking || {};
+  const priceNow = () => parseFloat(((SALE_ON ? SITE.sale.price : SITE.price) || '').replace(/[^0-9.]/g,'')) || 0;
+  // Meta Pixel
+  if(T.metaPixel){
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', T.metaPixel); fbq('track', 'PageView');
+  }
+  // Google tag (GA4 + Ads)
+  const gid = T.ga4 || (T.adsDownload ? T.adsDownload.split('/')[0] : '');
+  if(gid){
+    const g = document.createElement('script'); g.async = true; g.src = 'https://www.googletagmanager.com/gtag/js?id=' + gid; document.head.appendChild(g);
+    window.dataLayer = window.dataLayer || []; window.gtag = function(){ dataLayer.push(arguments); };
+    gtag('js', new Date());
+    if(T.ga4) gtag('config', T.ga4);
+    if(T.adsDownload) gtag('config', T.adsDownload.split('/')[0]);
+  }
+  const fb = (...a) => { if(window.fbq) fbq(...a); };
+  const ga = (...a) => { if(window.gtag) gtag(...a); };
+
+  // free download clicks (only real installer links, not the "pick your Mac" fallback)
+  document.addEventListener('click', e => {
+    const a = e.target.closest('a'); if(!a) return;
+    const href = a.getAttribute('href') || '';
+    if((a.matches('[data-download],[data-os]')) && /\.(exe|dmg|msi)$/i.test(href)){
+      const os = a.dataset.os || (/\.exe$/i.test(href) ? 'win' : 'mac');
+      fb('track', 'Lead', { content_name: 'BlendKey Free', content_category: os });
+      ga('event', 'free_download', { os: os, version: SITE.version });
+      if(T.adsDownload) ga('event', 'conversion', { send_to: T.adsDownload });
+    }
+    if(a.matches('[data-buy]') && SITE.buyUrl && href === SITE.buyUrl){
+      const v = priceNow();
+      fb('track', 'InitiateCheckout', { value: v, currency: 'USD', content_name: 'BlendKey Pro' });
+      ga('event', 'begin_checkout', { value: v, currency: 'USD', items: [{ item_name: 'BlendKey Pro', price: v }] });
+    }
+  });
+
+  // completed purchase: Polar sends buyers back to /?purchase=success
+  const q = new URLSearchParams(location.search);
+  if(q.get('purchase') === 'success'){
+    const tok = q.get('customer_session_token') || q.get('checkout_id') || 'x';
+    let seen = false; try{ seen = sessionStorage.getItem('bk_purchase') === tok; sessionStorage.setItem('bk_purchase', tok); }catch(err){}
+    if(!seen){
+      const v = priceNow();
+      fb('track', 'Purchase', { value: v, currency: 'USD', content_name: 'BlendKey Pro' });
+      ga('event', 'purchase', { transaction_id: tok.slice(-24), value: v, currency: 'USD', items: [{ item_name: 'BlendKey Pro', price: v }] });
+    }
+    // tidy the address bar so a refresh or shared link doesn't count again
+    history.replaceState(null, '', location.pathname + location.hash);
+  }
+})();
+</script>
 </body>
 </html>
